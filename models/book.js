@@ -6,7 +6,8 @@ const BookSchema = new Schema({
         required: true
     },
     imagePath: {
-        type: String
+        type: String,
+        required: true
     },
     datePublished: {
         type: Number,

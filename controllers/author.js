@@ -12,12 +12,13 @@ const authorController = {
     },
 
     addAuthor: async(req, res) => {
-        const { name, bornYear, country, books } = req.body;
+        const { name, bornYear, country, books, singleId } = req.body;
         const author = new authorModel({
             name,
             bornYear,
             country,
-            books
+            books,
+            singleId
         });
 
         const result = await author.save();

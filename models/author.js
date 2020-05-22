@@ -13,6 +13,10 @@ const AuthorSchema = new Schema({
         type: String,
         required: true
     },
+    singleId: {
+        type: String,
+        required: true
+    },
     books: [{
         type: Types.ObjectId,
         ref: "book"

@@ -13,9 +13,8 @@ const bookController = {
 
     listBook: async(req, res) => {
         try {
-            const { idAuthor } = req.params;
-            const books = await bookModel.find({ authorBook: idAuthor });
-            // const books = await authorModel.findById(idAuthor, { books: 1 }).populate('books');
+            const { idBook } = req.params;
+            const books = await bookModel.find({ idBook });
             res.json(books);
         } catch (error) {
             res.status(500).json({ message: "Somenthing went even worse" })
@@ -24,16 +23,19 @@ const bookController = {
 
     addBook: async(req, res) => {
         try {
-            const { idAuthor } = req.params
+            const { singleId } = req.body;
 
-            const author = await authorModel.findById(idAuthor);
-
+            const author = await authorModel.findOne({singleId});
+            console.log(author)
+            if (!author) {
+                throw ({ message: "Id not found :(" })
+            }
             const { title, imagePath, datePublished } = req.body;
             const book = new bookModel({
                 title,
                 imagePath,
                 datePublished,
-                authorBook: idAuthor
+                authorBook: author._id
             });
 
             const newBook = await book.save();
@@ -44,38 +46,41 @@ const bookController = {
             return res.json(result);
         } catch (error) {
             console.error(error)
-            res.status(500).json({ message: "Something went oopsie" })
+            res.status(500).json({ message: "Something went oopsie: " + error.message })
         }
     },
 
     deleteBook: async(req, res) => {
-        const { idAuthor } = req.params;
-        const result = await bookModel.findByIdAndDelete(idAuthor);
-        return res.json(result);
+        try {
+            const { idBook } = req.params;
+            const result = await bookModel.findByIdAndDelete(idBook);
+            return res.json(result);
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: "Something went oopsie" })
+        }
     },
 
     searchBookById: async(req, res) => {
-        const { idBook } = req.params;
-        const result = await bookModel.findById(idBook);
-        return res.json(result);
+        try {
+            const { idBook } = req.params;
+            const result = await bookModel.findById(idBook);
+            return res.json(result);
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: "Something went oopsie" })
+        }
     },
 
     updateBook: async(req, res) => {
-        const { idBook } = req.params;
-        const result = await bookModel.findByIdAndUpdate(idBook, {...req.body });
-        return res.json(result);
-    },
-
-    deleteBook: async(req, res) => {
-        const { idAuthor, idBook } = req.params;
-
-        const author = await authorModel.findById(idAuthor);
-        author.books.pull(idBook);
-
-        const bookDeleted = await bookModel.findByIdAndDelete(idBook);
-        author.save();
-
-        return res.json(bookDeleted);
+        try {
+            const { idBook } = req.params;
+            const result = await bookModel.findByIdAndUpdate(idBook, {...req.body });
+            return res.json(result);
+        } catch (error) {
+            console.error(error)
+            res.status(500).json({ message: "Something went oopsie" })
+        }
     }
 }
 
